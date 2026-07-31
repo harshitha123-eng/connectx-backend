@@ -11,6 +11,11 @@ public class AuthController {
 
     private final AuthService authService;
     
+    @GetMapping("/test")
+    public String test() {
+        System.out.println("TEST API HIT");
+        return "Backend Working";
+    }
  
     @PostMapping("/register")
     public ResponseEntity<String> register(
