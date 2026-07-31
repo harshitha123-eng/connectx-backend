@@ -1,13 +1,14 @@
 package com.connectx.config;
 
 import java.util.Arrays;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,8 +28,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(
-            HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -37,17 +37,20 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
 
+                       
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                         
                         .requestMatchers("/api/auth/**").permitAll()
 
-                
+                       
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
 
-            
+                        
                         .requestMatchers("/chat/**").permitAll()
                         .requestMatchers("/chat").permitAll()
 
-                      
+                       
                         .requestMatchers("/api/files/**").permitAll()
 
                        
@@ -66,30 +69,22 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(
-                Arrays.asList(
-                        "http://localhost:5173",
-                        "https://connectx-frontend-p77x.vercel.app"
-                ));
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+                "http://localhost:5173",
+                "https://*.vercel.app"
+        ));
 
-        configuration.setAllowedMethods(
-                Arrays.asList(
-                        "GET",
-                        "POST",
-                        "PUT",
-                        "DELETE",
-                        "OPTIONS"
-                ));
+        configuration.setAllowedMethods(Arrays.asList(
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE",
+                "OPTIONS"
+        ));
 
-        configuration.setAllowedHeaders(
-                Arrays.asList(
-                        "Authorization",
-                        "Content-Type",
-                        "X-Requested-With"
-                ));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
 
-        configuration.setExposedHeaders(
-                Arrays.asList("Authorization"));
+        configuration.setExposedHeaders(Arrays.asList("*"));
 
         configuration.setAllowCredentials(true);
 
