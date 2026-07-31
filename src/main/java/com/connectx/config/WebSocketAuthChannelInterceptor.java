@@ -3,6 +3,7 @@ package com.connectx.config;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -45,12 +46,20 @@ public class WebSocketAuthChannelInterceptor implements ChannelInterceptor {
         }
 
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-        	
+
+            System.out.println("======================================");
+            System.out.println("STOMP CONNECT RECEIVED");
+
             List<String> authHeaders =
                     accessor.getNativeHeader("Authorization");
 
+            System.out.println("AUTH HEADER: " + authHeaders);
+
             if (authHeaders == null || authHeaders.isEmpty()) {
-                
+
+                System.out.println("TOKEN NOT RECEIVED");
+                System.out.println("======================================");
+
                 return message;
             }
 
@@ -62,19 +71,30 @@ public class WebSocketAuthChannelInterceptor implements ChannelInterceptor {
 
             try {
 
+                System.out.println("JWT TOKEN RECEIVED");
+
                 String username = jwtService.extractUsername(token);
+
+                System.out.println("USERNAME FROM TOKEN: " + username);
 
                 User user = userRepository.findByUsername(username)
                         .orElse(null);
 
                 if (user == null) {
-                	
+
+                    System.out.println("USER NOT FOUND");
+                    System.out.println("======================================");
+
                     return message;
                 }
 
+                System.out.println("USER FOUND");
+                System.out.println("USER ID: " + user.getId());
+                System.out.println("USERNAME: " + user.getUsername());
+
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
-                                username,
+                                user.getId().toString(),
                                 null,
                                 Collections.emptyList());
 
@@ -84,15 +104,26 @@ public class WebSocketAuthChannelInterceptor implements ChannelInterceptor {
                         accessor.getSessionAttributes();
 
                 if (sessionAttributes != null) {
+
                     sessionAttributes.put("username", username);
                     sessionAttributes.put("userId", user.getId());
+
+                    System.out.println("SESSION ATTRIBUTES STORED");
                 }
+
+                System.out.println("CALLING USER CONNECTED...");
 
                 presenceService.userConnected(user.getId());
 
+                System.out.println("USER MARKED ONLINE");
+                System.out.println("WEBSOCKET AUTH SUCCESS");
+                System.out.println("======================================");
+
             } catch (Exception e) {
 
+                System.out.println("WEBSOCKET AUTH ERROR");
                 e.printStackTrace();
+                System.out.println("======================================");
             }
         }
 
