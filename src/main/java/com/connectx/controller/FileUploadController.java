@@ -33,7 +33,7 @@ public class FileUploadController {
 
         Files.copy(file.getInputStream(), filePath);
 
-        return "http://localhost:8089/api/files/" + fileName;
+        return "https://connectx-backend-1-nv31.onrender.com/api/files/" + fileName;
     }
 
     @GetMapping("/{fileName}")
