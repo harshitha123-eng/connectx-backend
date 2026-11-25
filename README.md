@@ -11,8 +11,7 @@ REST and WebSocket backend for the ConnectX chat application.
 - Message search
 
 ## Tech Stack
-Java, Spring Boot, Spring Security, Spring Data JPA, PostgreSQL (Neon), WebSocket, Maven, Docker, deployed on Render
-
+Java, Spring Boot, Spring Security, JWT, Spring Data JPA, Hibernate, REST API, WebSocket (STOMP, SockJS), PostgreSQL (Neon), Maven, Docker, deployed on Render
 ## Configuration
 Set these environment variables:
 - `SPRING_DATASOURCE_URL` (jdbc:postgresql://HOST/DB?sslmode=require)
